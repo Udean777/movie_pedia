@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "357275607726",
+    "project_id": "movie-pedia-ab2b5",
+    "storage_bucket": "movie-pedia-ab2b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357275607726:android:0c6eba3f19f16a1e81833f",
+        "android_client_info": {
+          "package_name": "com.example.movie_pedia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMkxtRf2XpTbFjYyWDZJ0BMPzKiaGiByc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
