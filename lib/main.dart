@@ -5,12 +5,15 @@ import 'package:movie_pedia/core/routes/main_routes.dart';
 import 'package:movie_pedia/core/wrapper/auth_wrapper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_pedia/firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await dotenv.load(fileName: ".env");
+
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -29,8 +32,9 @@ class MyApp extends StatelessWidget {
       darkTheme: FlexThemeData.dark(
         scheme: FlexScheme.deepBlue,
       ),
-      theme: FlexThemeData.light(
-        scheme: FlexScheme.aquaBlue,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
