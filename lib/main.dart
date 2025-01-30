@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_pedia/core/routes/main_routes.dart';
 import 'package:movie_pedia/core/wrapper/auth_wrapper.dart';
@@ -10,7 +11,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -20,7 +25,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Movie Pedia',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      themeMode: ThemeMode.system,
+      darkTheme: FlexThemeData.dark(
+        scheme: FlexScheme.deepBlue,
+      ),
+      theme: FlexThemeData.light(
+        scheme: FlexScheme.aquaBlue,
+      ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: mainRoutes,

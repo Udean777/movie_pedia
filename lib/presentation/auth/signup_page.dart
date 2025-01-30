@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_pedia/core/providers/firebase_auth_provider.dart';
@@ -21,7 +23,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password tidak sama')),
+        const SnackBar(content: Text('Password does not match!')),
       );
       return;
     }
@@ -29,15 +31,12 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     setState(() => _isLoading = true);
 
     try {
-      print('Attempting to sign up with email: ${_emailController.text}');
       await ref.read(authServiceProvider).signUpWithEmailAndPassword(
             _emailController.text.trim(),
             _passwordController.text.trim(),
           );
-      print('Sign up successful');
       Navigator.pop(context);
     } catch (e) {
-      print('Sign up failed: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );
@@ -51,48 +50,84 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Daftar')),
-        body: Padding(
+        appBar: AppBar(),
+        body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Form(
             key: _formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Email tidak boleh kosong' : null,
-                ),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Password tidak boleh kosong' : null,
-                ),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration:
-                      const InputDecoration(labelText: 'Konfirmasi Password'),
-                  obscureText: true,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Harap konfirmasi password' : null,
+                Text(
+                  'Create your account',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: const Icon(Icons.email),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Email cannot be empty!' : null,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: const Icon(Icons.lock),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  obscureText: true,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Password cannot be empty!' : null,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  obscureText: true,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please confirm your password!' : null,
+                ),
+                const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _submit,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   child: _isLoading
                       ? const CircularProgressIndicator()
-                      : const Text('Daftar'),
+                      : const Text('Register'),
                 ),
+                const SizedBox(height: 20),
                 TextButton(
                   onPressed: () => Navigator.pushReplacementNamed(
                     context,
                     '/signin',
                   ),
-                  child: const Text('Sudah punya akun? Login disini'),
+                  child: const Text('Already have an account? Login'),
                 ),
               ],
             ),

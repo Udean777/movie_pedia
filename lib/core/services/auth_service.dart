@@ -36,17 +36,17 @@ class AuthService {
   String _parseAuthError(FirebaseAuthException e) {
     switch (e.code) {
       case 'email-already-in-use':
-        return 'Email sudah terdaftar';
+        return 'Email is already registered';
       case 'weak-password':
-        return 'Password terlalu lemah';
+        return 'Password is too weak';
       case 'user-not-found':
-        return 'User tidak ditemukan';
+        return 'User not found';
       case 'wrong-password':
-        return 'Password salah';
+        return 'Incorrect password';
       case 'invalid-email':
-        return 'Format email tidak valid';
+        return 'Invalid email format';
       default:
-        return 'Terjadi kesalahan, silakan coba lagi';
+        return 'An error occurred, please try again';
     }
   }
 
