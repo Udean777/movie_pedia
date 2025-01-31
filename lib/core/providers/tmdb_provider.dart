@@ -38,7 +38,20 @@ final moviesProvider =
 final movieDetailProvider =
     FutureProvider.family<MovieDetailModel, int>((ref, movieId) async {
   final dio = ref.watch(dioProvider);
-  final response = await dio.get("/movie/$movieId");
 
-  return MovieDetailModel.fromJson(response.data);
+  try {
+    final response = await dio.get(
+      "/movie/$movieId",
+      queryParameters: {
+        "append_to_response": "credits,reviews",
+        "language": "en-US",
+      },
+    );
+
+    // print("API Response: ${response.data}"); // For debugging
+    return MovieDetailModel.fromJson(response.data);
+  } catch (e) {
+    // print("Error fetching movie details: $e"); // For debugging
+    rethrow;
+  }
 });
