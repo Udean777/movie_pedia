@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:movie_pedia/core/models/movie_detail_model.dart';
-import 'package:movie_pedia/presentation/home/widget/about_movie_tab.dart';
-import 'package:movie_pedia/presentation/home/widget/cast_tab.dart';
-import 'package:movie_pedia/presentation/home/widget/reviews_tab.dart';
+import 'package:movie_pedia/presentation/detail/movie_detail/widgets/about_movie_tab.dart';
+import 'package:movie_pedia/presentation/detail/movie_detail/widgets/cast_tab.dart';
+import 'package:movie_pedia/presentation/detail/movie_detail/widgets/reviews_tab.dart';
 
 class MovieInfo extends StatelessWidget {
   final MovieDetailModel movie;

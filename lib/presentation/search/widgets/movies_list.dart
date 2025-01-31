@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_pedia/core/models/movie_model.dart';
-import 'package:movie_pedia/presentation/home/movie_detail_page.dart';
+import 'package:movie_pedia/presentation/detail/movie_detail/movie_detail_page.dart';
 import 'package:movie_pedia/presentation/search/widgets/movie_card.dart';
 
 class MoviesList extends StatelessWidget {

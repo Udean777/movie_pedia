@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_pedia/core/models/movie_detail_model.dart';
-import 'package:movie_pedia/presentation/home/widget/movie_header.dart';
-import 'package:movie_pedia/presentation/home/widget/movie_info.dart';
+import 'package:movie_pedia/presentation/detail/movie_detail/widgets/movie_header.dart';
+import 'package:movie_pedia/presentation/detail/movie_detail/widgets/movie_info.dart';
 
 class MovieDetailWidget extends StatelessWidget {
   final MovieDetailModel movie;
