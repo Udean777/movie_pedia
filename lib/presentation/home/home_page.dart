@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_pedia/core/models/movie_model.dart';
 import 'package:movie_pedia/core/providers/tmdb_provider.dart';
 import 'package:movie_pedia/core/widgets/logout_dialog.dart';
+import 'package:movie_pedia/presentation/home/movie_detail_page.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -19,11 +20,11 @@ class HomePage extends ConsumerWidget {
         appBar: _buildAppBar(context, ref),
         body: Column(
           children: [
-            // _buildSearchBar(colorScheme),
-            const SizedBox(height: 10),
             _buildTabBar(ref),
             const SizedBox(height: 10),
-            Expanded(child: _buildMovieGrid(movies, colorScheme)),
+            Expanded(
+              child: _buildMovieGrid(movies, colorScheme),
+            ),
           ],
         ),
       ),
@@ -44,53 +45,66 @@ class HomePage extends ConsumerWidget {
         itemCount: movies.length,
         itemBuilder: (context, index) {
           final movie = movies[index];
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Stack(
-              children: [
-                Image.network(
-                  movie.posterPath,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MovieDetailPage(movieId: movie.id),
                 ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.black.withValues(alpha: 0.8),
-                          Colors.transparent
+              );
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Stack(
+                children: [
+                  Image.network(
+                    movie.posterPath,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.black.withValues(alpha: 0.8),
+                            Colors.transparent
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            movie.title,
+                            style: TextStyle(
+                              color: colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            '⭐ ${movie.voteAverage}',
+                            style: TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          movie.title,
-                          style: TextStyle(
-                              color: colorScheme.onPrimary,
-                              fontWeight: FontWeight.bold),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          '⭐ ${movie.voteAverage}',
-                          style: TextStyle(
-                              color: Colors.amber, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -117,25 +131,6 @@ class HomePage extends ConsumerWidget {
           onPressed: () => LogoutDialog.show(context, ref),
         ),
       ],
-    );
-  }
-
-  Padding _buildSearchBar(ColorScheme colorScheme) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Material(
-        elevation: 4,
-        borderRadius: BorderRadius.circular(10),
-        child: TextField(
-          decoration: InputDecoration(
-            hintText: 'Search movies...',
-            prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            filled: true,
-            fillColor: colorScheme.surface,
-          ),
-        ),
-      ),
     );
   }
 

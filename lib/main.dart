@@ -32,9 +32,8 @@ class MyApp extends StatelessWidget {
       darkTheme: FlexThemeData.dark(
         scheme: FlexScheme.deepBlue,
       ),
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
+      theme: FlexThemeData.light(
+        scheme: FlexScheme.deepBlue,
       ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
