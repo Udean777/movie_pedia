@@ -30,10 +30,10 @@ class MyApp extends StatelessWidget {
       title: 'Movie Pedia',
       themeMode: ThemeMode.system,
       darkTheme: FlexThemeData.dark(
-        scheme: FlexScheme.deepBlue,
+        scheme: FlexScheme.blueWhale,
       ),
       theme: FlexThemeData.light(
-        scheme: FlexScheme.deepBlue,
+        scheme: FlexScheme.blueWhale,
       ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',

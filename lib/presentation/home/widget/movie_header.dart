@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_pedia/core/database/wishlist_db.dart';
 import 'package:movie_pedia/core/models/movie_detail_model.dart';
 import 'package:movie_pedia/core/providers/wishlist_provider.dart';
 
@@ -114,7 +113,7 @@ class MovieHeader extends ConsumerWidget {
               padding: const EdgeInsets.all(8),
               child: Icon(
                 isWishlisted ? Icons.favorite : Icons.favorite_border,
-                color: Colors.white,
+                color: isWishlisted ? Colors.red : Colors.white,
               ),
             ),
             onPressed: () {
@@ -122,7 +121,7 @@ class MovieHeader extends ConsumerWidget {
               if (isWishlisted) {
                 wishlistNotifier.removeFromWishlist(movie.title);
               } else {
-                wishlistNotifier.addToWishlist(movie as WishlistMovie);
+                wishlistNotifier.addToWishlistFromDetail(movie);
               }
             },
           ),

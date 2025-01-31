@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_pedia/core/database/wishlist_db.dart';
+import 'package:movie_pedia/core/models/movie_detail_model.dart';
 
 final wishlistDatabaseProvider = Provider<WishlistDb>((ref) => WishlistDb());
 
@@ -20,21 +21,27 @@ class WishlistNotifier extends StateNotifier<List<WishlistMovie>> {
     state = await _wishlistDb.getWishlist();
   }
 
-  Future<void> addToWishlist(WishlistMovie movie) async {
-    final exists = await _wishlistDb.isMovieInWishlist(movie.title);
+  Future<void> addToWishlistFromDetail(MovieDetailModel movieDetail) async {
+    final exists = await _wishlistDb.isMovieInWishlist(movieDetail.title);
     if (!exists) {
-      await _wishlistDb.addToWishlist(WishlistMoviesCompanion.insert(
-        title: movie.title,
-        posterPath: movie.posterPath,
-        voteAverage: movie.voteAverage,
-      ));
-      state = [...state, movie]; // Update state langsung agar lebih responsif
+      final wishlistMovie = WishlistMovieExtension.fromMovieDetail(movieDetail);
+      await _wishlistDb.addToWishlist(wishlistMovie);
+
+      final newMovie = WishlistMovie(
+        id: 0,
+        title: movieDetail.title,
+        posterPath: movieDetail.posterPath,
+        voteAverage: double.parse(movieDetail.voteAverage.toString()),
+        genreIds: movieDetail.genres.join(','),
+        runtime: movieDetail.runtime,
+      );
+
+      state = [...state, newMovie];
     }
   }
 
   Future<void> removeFromWishlist(String title) async {
     await _wishlistDb.removeFromWishlistByTitle(title);
-    state =
-        state.where((m) => m.title != title).toList(); // Update state langsung
+    state = state.where((m) => m.title != title).toList();
   }
 }

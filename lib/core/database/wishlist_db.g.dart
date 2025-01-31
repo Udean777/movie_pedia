@@ -35,8 +35,23 @@ class $WishlistMoviesTable extends WishlistMovies
   late final GeneratedColumn<double> voteAverage = GeneratedColumn<double>(
       'vote_average', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _genreIdsMeta =
+      const VerificationMeta('genreIds');
   @override
-  List<GeneratedColumn> get $columns => [id, title, posterPath, voteAverage];
+  late final GeneratedColumn<String> genreIds = GeneratedColumn<String>(
+      'genre_ids', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _runtimeMeta =
+      const VerificationMeta('runtime');
+  @override
+  late final GeneratedColumn<int> runtime = GeneratedColumn<int>(
+      'runtime', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, posterPath, voteAverage, genreIds, runtime];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -72,6 +87,14 @@ class $WishlistMoviesTable extends WishlistMovies
     } else if (isInserting) {
       context.missing(_voteAverageMeta);
     }
+    if (data.containsKey('genre_ids')) {
+      context.handle(_genreIdsMeta,
+          genreIds.isAcceptableOrUnknown(data['genre_ids']!, _genreIdsMeta));
+    }
+    if (data.containsKey('runtime')) {
+      context.handle(_runtimeMeta,
+          runtime.isAcceptableOrUnknown(data['runtime']!, _runtimeMeta));
+    }
     return context;
   }
 
@@ -89,6 +112,10 @@ class $WishlistMoviesTable extends WishlistMovies
           .read(DriftSqlType.string, data['${effectivePrefix}poster_path'])!,
       voteAverage: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}vote_average'])!,
+      genreIds: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}genre_ids'])!,
+      runtime: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}runtime']),
     );
   }
 
@@ -103,11 +130,15 @@ class WishlistMovie extends DataClass implements Insertable<WishlistMovie> {
   final String title;
   final String posterPath;
   final double voteAverage;
+  final String genreIds;
+  final int? runtime;
   const WishlistMovie(
       {required this.id,
       required this.title,
       required this.posterPath,
-      required this.voteAverage});
+      required this.voteAverage,
+      required this.genreIds,
+      this.runtime});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -115,6 +146,10 @@ class WishlistMovie extends DataClass implements Insertable<WishlistMovie> {
     map['title'] = Variable<String>(title);
     map['poster_path'] = Variable<String>(posterPath);
     map['vote_average'] = Variable<double>(voteAverage);
+    map['genre_ids'] = Variable<String>(genreIds);
+    if (!nullToAbsent || runtime != null) {
+      map['runtime'] = Variable<int>(runtime);
+    }
     return map;
   }
 
@@ -124,6 +159,10 @@ class WishlistMovie extends DataClass implements Insertable<WishlistMovie> {
       title: Value(title),
       posterPath: Value(posterPath),
       voteAverage: Value(voteAverage),
+      genreIds: Value(genreIds),
+      runtime: runtime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(runtime),
     );
   }
 
@@ -135,6 +174,8 @@ class WishlistMovie extends DataClass implements Insertable<WishlistMovie> {
       title: serializer.fromJson<String>(json['title']),
       posterPath: serializer.fromJson<String>(json['posterPath']),
       voteAverage: serializer.fromJson<double>(json['voteAverage']),
+      genreIds: serializer.fromJson<String>(json['genreIds']),
+      runtime: serializer.fromJson<int?>(json['runtime']),
     );
   }
   @override
@@ -145,16 +186,25 @@ class WishlistMovie extends DataClass implements Insertable<WishlistMovie> {
       'title': serializer.toJson<String>(title),
       'posterPath': serializer.toJson<String>(posterPath),
       'voteAverage': serializer.toJson<double>(voteAverage),
+      'genreIds': serializer.toJson<String>(genreIds),
+      'runtime': serializer.toJson<int?>(runtime),
     };
   }
 
   WishlistMovie copyWith(
-          {int? id, String? title, String? posterPath, double? voteAverage}) =>
+          {int? id,
+          String? title,
+          String? posterPath,
+          double? voteAverage,
+          String? genreIds,
+          Value<int?> runtime = const Value.absent()}) =>
       WishlistMovie(
         id: id ?? this.id,
         title: title ?? this.title,
         posterPath: posterPath ?? this.posterPath,
         voteAverage: voteAverage ?? this.voteAverage,
+        genreIds: genreIds ?? this.genreIds,
+        runtime: runtime.present ? runtime.value : this.runtime,
       );
   WishlistMovie copyWithCompanion(WishlistMoviesCompanion data) {
     return WishlistMovie(
@@ -164,6 +214,8 @@ class WishlistMovie extends DataClass implements Insertable<WishlistMovie> {
           data.posterPath.present ? data.posterPath.value : this.posterPath,
       voteAverage:
           data.voteAverage.present ? data.voteAverage.value : this.voteAverage,
+      genreIds: data.genreIds.present ? data.genreIds.value : this.genreIds,
+      runtime: data.runtime.present ? data.runtime.value : this.runtime,
     );
   }
 
@@ -173,13 +225,16 @@ class WishlistMovie extends DataClass implements Insertable<WishlistMovie> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('posterPath: $posterPath, ')
-          ..write('voteAverage: $voteAverage')
+          ..write('voteAverage: $voteAverage, ')
+          ..write('genreIds: $genreIds, ')
+          ..write('runtime: $runtime')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, posterPath, voteAverage);
+  int get hashCode =>
+      Object.hash(id, title, posterPath, voteAverage, genreIds, runtime);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -187,7 +242,9 @@ class WishlistMovie extends DataClass implements Insertable<WishlistMovie> {
           other.id == this.id &&
           other.title == this.title &&
           other.posterPath == this.posterPath &&
-          other.voteAverage == this.voteAverage);
+          other.voteAverage == this.voteAverage &&
+          other.genreIds == this.genreIds &&
+          other.runtime == this.runtime);
 }
 
 class WishlistMoviesCompanion extends UpdateCompanion<WishlistMovie> {
@@ -195,17 +252,23 @@ class WishlistMoviesCompanion extends UpdateCompanion<WishlistMovie> {
   final Value<String> title;
   final Value<String> posterPath;
   final Value<double> voteAverage;
+  final Value<String> genreIds;
+  final Value<int?> runtime;
   const WishlistMoviesCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.posterPath = const Value.absent(),
     this.voteAverage = const Value.absent(),
+    this.genreIds = const Value.absent(),
+    this.runtime = const Value.absent(),
   });
   WishlistMoviesCompanion.insert({
     this.id = const Value.absent(),
     required String title,
     required String posterPath,
     required double voteAverage,
+    this.genreIds = const Value.absent(),
+    this.runtime = const Value.absent(),
   })  : title = Value(title),
         posterPath = Value(posterPath),
         voteAverage = Value(voteAverage);
@@ -214,12 +277,16 @@ class WishlistMoviesCompanion extends UpdateCompanion<WishlistMovie> {
     Expression<String>? title,
     Expression<String>? posterPath,
     Expression<double>? voteAverage,
+    Expression<String>? genreIds,
+    Expression<int>? runtime,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (posterPath != null) 'poster_path': posterPath,
       if (voteAverage != null) 'vote_average': voteAverage,
+      if (genreIds != null) 'genre_ids': genreIds,
+      if (runtime != null) 'runtime': runtime,
     });
   }
 
@@ -227,12 +294,16 @@ class WishlistMoviesCompanion extends UpdateCompanion<WishlistMovie> {
       {Value<int>? id,
       Value<String>? title,
       Value<String>? posterPath,
-      Value<double>? voteAverage}) {
+      Value<double>? voteAverage,
+      Value<String>? genreIds,
+      Value<int?>? runtime}) {
     return WishlistMoviesCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       posterPath: posterPath ?? this.posterPath,
       voteAverage: voteAverage ?? this.voteAverage,
+      genreIds: genreIds ?? this.genreIds,
+      runtime: runtime ?? this.runtime,
     );
   }
 
@@ -251,6 +322,12 @@ class WishlistMoviesCompanion extends UpdateCompanion<WishlistMovie> {
     if (voteAverage.present) {
       map['vote_average'] = Variable<double>(voteAverage.value);
     }
+    if (genreIds.present) {
+      map['genre_ids'] = Variable<String>(genreIds.value);
+    }
+    if (runtime.present) {
+      map['runtime'] = Variable<int>(runtime.value);
+    }
     return map;
   }
 
@@ -260,7 +337,9 @@ class WishlistMoviesCompanion extends UpdateCompanion<WishlistMovie> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('posterPath: $posterPath, ')
-          ..write('voteAverage: $voteAverage')
+          ..write('voteAverage: $voteAverage, ')
+          ..write('genreIds: $genreIds, ')
+          ..write('runtime: $runtime')
           ..write(')'))
         .toString();
   }
@@ -283,6 +362,8 @@ typedef $$WishlistMoviesTableCreateCompanionBuilder = WishlistMoviesCompanion
   required String title,
   required String posterPath,
   required double voteAverage,
+  Value<String> genreIds,
+  Value<int?> runtime,
 });
 typedef $$WishlistMoviesTableUpdateCompanionBuilder = WishlistMoviesCompanion
     Function({
@@ -290,6 +371,8 @@ typedef $$WishlistMoviesTableUpdateCompanionBuilder = WishlistMoviesCompanion
   Value<String> title,
   Value<String> posterPath,
   Value<double> voteAverage,
+  Value<String> genreIds,
+  Value<int?> runtime,
 });
 
 class $$WishlistMoviesTableFilterComposer
@@ -312,6 +395,12 @@ class $$WishlistMoviesTableFilterComposer
 
   ColumnFilters<double> get voteAverage => $composableBuilder(
       column: $table.voteAverage, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get genreIds => $composableBuilder(
+      column: $table.genreIds, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get runtime => $composableBuilder(
+      column: $table.runtime, builder: (column) => ColumnFilters(column));
 }
 
 class $$WishlistMoviesTableOrderingComposer
@@ -334,6 +423,12 @@ class $$WishlistMoviesTableOrderingComposer
 
   ColumnOrderings<double> get voteAverage => $composableBuilder(
       column: $table.voteAverage, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get genreIds => $composableBuilder(
+      column: $table.genreIds, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get runtime => $composableBuilder(
+      column: $table.runtime, builder: (column) => ColumnOrderings(column));
 }
 
 class $$WishlistMoviesTableAnnotationComposer
@@ -356,6 +451,12 @@ class $$WishlistMoviesTableAnnotationComposer
 
   GeneratedColumn<double> get voteAverage => $composableBuilder(
       column: $table.voteAverage, builder: (column) => column);
+
+  GeneratedColumn<String> get genreIds =>
+      $composableBuilder(column: $table.genreIds, builder: (column) => column);
+
+  GeneratedColumn<int> get runtime =>
+      $composableBuilder(column: $table.runtime, builder: (column) => column);
 }
 
 class $$WishlistMoviesTableTableManager extends RootTableManager<
@@ -388,24 +489,32 @@ class $$WishlistMoviesTableTableManager extends RootTableManager<
             Value<String> title = const Value.absent(),
             Value<String> posterPath = const Value.absent(),
             Value<double> voteAverage = const Value.absent(),
+            Value<String> genreIds = const Value.absent(),
+            Value<int?> runtime = const Value.absent(),
           }) =>
               WishlistMoviesCompanion(
             id: id,
             title: title,
             posterPath: posterPath,
             voteAverage: voteAverage,
+            genreIds: genreIds,
+            runtime: runtime,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String title,
             required String posterPath,
             required double voteAverage,
+            Value<String> genreIds = const Value.absent(),
+            Value<int?> runtime = const Value.absent(),
           }) =>
               WishlistMoviesCompanion.insert(
             id: id,
             title: title,
             posterPath: posterPath,
             voteAverage: voteAverage,
+            genreIds: genreIds,
+            runtime: runtime,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

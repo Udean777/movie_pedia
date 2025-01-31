@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_pedia/core/models/genre_model.dart';
 import 'package:movie_pedia/core/models/movie_detail_model.dart';
 import 'package:movie_pedia/core/models/movie_model.dart';
 import 'package:movie_pedia/core/services/tmdb_interceptor.dart';
@@ -54,4 +55,12 @@ final movieDetailProvider =
     // print("Error fetching movie details: $e"); // For debugging
     rethrow;
   }
+});
+
+final genresProvider = FutureProvider<List<GenreModel>>((ref) async {
+  final dio = ref.watch(dioProvider);
+  final response = await dio.get("/genre/movie/list");
+  return (response.data["genres"] as List)
+      .map((json) => GenreModel.fromJson(json))
+      .toList();
 });

@@ -20,8 +20,9 @@ class MovieDetailPage extends ConsumerWidget {
         loading: () => const Center(
           child: CircularProgressIndicator(),
         ),
-        error: (error, _) =>
-            const Center(child: Text("Failed to load details")),
+        error: (error, _) => const Center(
+          child: Text("Failed to load details"),
+        ),
       ),
     );
   }
