@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_pedia/core/models/movie_model.dart';
 import 'package:movie_pedia/core/providers/tmdb_provider.dart';
 import 'package:movie_pedia/core/widgets/logout_dialog.dart';
+import 'package:movie_pedia/core/widgets/not_found.dart';
 import 'package:movie_pedia/presentation/home/movie_detail_page.dart';
 
 class HomePage extends ConsumerWidget {
@@ -45,6 +46,14 @@ class HomePage extends ConsumerWidget {
         itemCount: movies.length,
         itemBuilder: (context, index) {
           final movie = movies[index];
+
+          if (movies.isEmpty) {
+            return NotFound(
+              image: 'assets/video-player.png',
+              title: 'No Movies',
+            );
+          }
+
           return GestureDetector(
             onTap: () {
               Navigator.push(

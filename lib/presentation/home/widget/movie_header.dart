@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_pedia/core/database/wishlist_db.dart';
 import 'package:movie_pedia/core/models/movie_detail_model.dart';
+import 'package:movie_pedia/core/providers/wishlist_provider.dart';
 
-class MovieHeader extends StatelessWidget {
+class MovieHeader extends ConsumerWidget {
   final MovieDetailModel movie;
 
   const MovieHeader({super.key, required this.movie});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final wishlist = ref.watch(wishlistProvider);
+    final isWishlisted = wishlist.any((m) => m.title == movie.title);
+
     return Stack(
       children: [
         Image.network(
@@ -106,12 +112,19 @@ class MovieHeader extends StatelessWidget {
                 color: Colors.black.withValues(alpha: 0.5),
               ),
               padding: const EdgeInsets.all(8),
-              child: const Icon(
-                Icons.bookmark_border,
+              child: Icon(
+                isWishlisted ? Icons.favorite : Icons.favorite_border,
                 color: Colors.white,
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              final wishlistNotifier = ref.read(wishlistProvider.notifier);
+              if (isWishlisted) {
+                wishlistNotifier.removeFromWishlist(movie.title);
+              } else {
+                wishlistNotifier.addToWishlist(movie as WishlistMovie);
+              }
+            },
           ),
         ),
       ],
