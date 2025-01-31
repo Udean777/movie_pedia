@@ -12,6 +12,7 @@ class MovieHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final wishlist = ref.watch(wishlistProvider);
     final isWishlisted = wishlist.any((m) => m.title == movie.title);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Stack(
       children: [
@@ -29,7 +30,7 @@ class MovieHeader extends ConsumerWidget {
               end: Alignment.bottomCenter,
               colors: [
                 Colors.transparent,
-                const Color(0xFF1F1D2B),
+                Color(0xFF1F1D2B),
               ],
             ),
           ),
@@ -50,30 +51,30 @@ class MovieHeader extends ConsumerWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       movie.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: colorScheme.onPrimary,
                       ),
                     ),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.star,
                           color: Colors.amber,
                           size: 18,
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(
                           movie.voteAverage.toStringAsFixed(1).toString(),
-                          style: const TextStyle(color: Colors.white),
+                          style: TextStyle(color: colorScheme.onPrimary),
                         ),
                       ],
                     ),
@@ -92,8 +93,8 @@ class MovieHeader extends ConsumerWidget {
                 shape: BoxShape.circle,
                 color: Colors.black.withValues(alpha: 0.5),
               ),
-              padding: const EdgeInsets.all(8),
-              child: const Icon(
+              padding: EdgeInsets.all(8),
+              child: Icon(
                 Icons.arrow_back,
                 color: Colors.white,
               ),
@@ -110,7 +111,7 @@ class MovieHeader extends ConsumerWidget {
                 shape: BoxShape.circle,
                 color: Colors.black.withValues(alpha: 0.5),
               ),
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8),
               child: Icon(
                 isWishlisted ? Icons.favorite : Icons.favorite_border,
                 color: isWishlisted ? Colors.red : Colors.white,

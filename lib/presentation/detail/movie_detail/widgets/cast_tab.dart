@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:movie_pedia/core/models/movie_detail_model.dart';
+import 'package:movie_pedia/core/utils/get_text_color.dart';
 import 'package:movie_pedia/core/widgets/not_found.dart';
 
 class CastTab extends StatelessWidget {
   final MovieDetailModel movie;
 
-  const CastTab({super.key, required this.movie});
+  const CastTab({
+    super.key,
+    required this.movie,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +45,8 @@ class CastTab extends StatelessWidget {
             Expanded(
               child: Text(
                 cast.name,
-                style: const TextStyle(
-                  color: Colors.black,
+                style: TextStyle(
+                  color: getTextColor(context),
                   fontWeight: FontWeight.bold,
                 ),
                 overflow: TextOverflow.ellipsis,

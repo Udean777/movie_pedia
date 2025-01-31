@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_pedia/core/providers/tmdb_provider.dart';
+import 'package:movie_pedia/core/utils/get_text_color.dart';
 
 class HomeTabBar extends StatelessWidget {
   final WidgetRef ref;
@@ -10,15 +11,16 @@ class HomeTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TabBar(
-      labelColor: Colors.black,
+      labelColor: getTextColor(context),
+      labelStyle: TextStyle(fontWeight: FontWeight.bold),
       unselectedLabelColor: Colors.grey,
       indicatorSize: TabBarIndicatorSize.label,
-      labelPadding: const EdgeInsets.symmetric(horizontal: 12),
+      labelPadding: EdgeInsets.symmetric(horizontal: 12),
       onTap: (index) {
         final categories = ["now_playing", "upcoming", "top_rated", "popular"];
         ref.read(selectedCategoryProvider.notifier).state = categories[index];
       },
-      tabs: const [
+      tabs: [
         Tab(text: "Now Playing"),
         Tab(text: "Upcoming"),
         Tab(text: "Top Rated"),

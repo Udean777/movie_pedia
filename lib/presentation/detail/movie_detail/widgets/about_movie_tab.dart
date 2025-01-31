@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:movie_pedia/core/models/movie_detail_model.dart';
+import 'package:movie_pedia/core/utils/get_text_color.dart';
 import 'package:movie_pedia/core/widgets/not_found.dart';
 
 class AboutMovieTab extends StatelessWidget {
   final MovieDetailModel movie;
 
-  const AboutMovieTab({super.key, required this.movie});
+  const AboutMovieTab({
+    super.key,
+    required this.movie,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +25,8 @@ class AboutMovieTab extends StatelessWidget {
         padding: const EdgeInsets.only(top: 16),
         child: Text(
           movie.overview,
-          style: const TextStyle(
-            color: Colors.black,
+          style: TextStyle(
+            color: getTextColor(context),
             height: 1.5,
           ),
         ),

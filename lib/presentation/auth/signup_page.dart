@@ -3,6 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_pedia/core/providers/firebase_auth_provider.dart';
+import 'package:movie_pedia/core/utils/get_text_color.dart';
+import 'package:movie_pedia/core/widgets/custom_button.dart';
+import 'package:movie_pedia/core/widgets/custom_textfield.dart';
+import 'package:movie_pedia/core/widgets/navigation_sign_button.dart';
+import 'package:movie_pedia/core/widgets/social_sign_button.dart';
+import 'package:movie_pedia/presentation/auth/signin_page.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});
@@ -17,6 +23,14 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
+
+  Future<void> _onGoogleLogin() async {
+    // Implement Google login logic later
+  }
+
+  Future<void> _onFacebookLogin() async {
+    // Implement Facebook login logic later
+  }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -41,98 +55,143 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         SnackBar(content: Text(e.toString())),
       );
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: AppBar(),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Create your account',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: const Icon(Icons.email),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Email cannot be empty!' : null,
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  obscureText: true,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Password cannot be empty!' : null,
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  obscureText: true,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Please confirm your password!' : null,
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _submit,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator()
-                      : const Text('Register'),
-                ),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () => Navigator.pushReplacementNamed(
-                    context,
-                    '/signin',
-                  ),
-                  child: const Text('Already have an account? Login'),
-                ),
-              ],
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDarkMode ? Colors.grey[900] : Colors.white;
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/login-image.png"),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.3),
+                  Colors.black.withValues(alpha: 0.7),
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 40),
+                      Card(
+                        color: cardColor,
+                        elevation: 8,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(24),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Create Your Account',
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                    color: getTextColor(context),
+                                  ),
+                                ),
+                                SizedBox(height: 32),
+                                CustomTextField(
+                                  controller: _emailController,
+                                  icon: Icons.email,
+                                  labelText: 'Email',
+                                ),
+                                SizedBox(height: 20),
+                                CustomTextField(
+                                  controller: _passwordController,
+                                  icon: Icons.lock,
+                                  labelText: 'Password',
+                                  isPassword: true,
+                                ),
+                                SizedBox(height: 20),
+                                CustomTextField(
+                                  controller: _confirmPasswordController,
+                                  icon: Icons.lock_outline,
+                                  labelText: 'Confirm Password',
+                                  isPassword: true,
+                                ),
+                                SizedBox(height: 28),
+                                CustomButton(
+                                  isLoading: _isLoading,
+                                  onPressed: _submit,
+                                  text: 'Register',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 24),
+                      SocialSignButton(
+                        text: 'Sign up with Google',
+                        onPressed: _onGoogleLogin,
+                        backgroundColor: Colors.white,
+                        icon: Image.asset(
+                          'assets/icons8-google-96.png',
+                          height: 30,
+                          width: 30,
+                        ),
+                        textColor: Colors.black,
+                      ),
+                      SizedBox(height: 12),
+                      SocialSignButton(
+                        text: 'Sign up with Facebook',
+                        onPressed: _onFacebookLogin,
+                        backgroundColor: Colors.blue,
+                        icon: Icon(
+                          Icons.facebook,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        textColor: Colors.white,
+                      ),
+                      SizedBox(height: 24),
+                      NavigationSignButton(
+                        text: 'Already have an account? ',
+                        subText: 'Login',
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => SigninPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

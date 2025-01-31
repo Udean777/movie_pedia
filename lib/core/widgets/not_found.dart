@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_pedia/core/utils/get_text_color.dart';
 
 class NotFound extends StatelessWidget {
   final String image;
@@ -26,7 +27,7 @@ class NotFound extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: Colors.black,
+              color: getTextColor(context),
               fontWeight: FontWeight.bold,
             ),
           ),

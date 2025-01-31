@@ -23,7 +23,10 @@ class HomePage extends ConsumerWidget {
             HomeTabBar(ref: ref),
             const SizedBox(height: 10),
             Expanded(
-              child: MovieGrid(movies: movies, colorScheme: colorScheme),
+              child: MovieGrid(
+                movies: movies,
+                colorScheme: colorScheme,
+              ),
             ),
           ],
         ),
