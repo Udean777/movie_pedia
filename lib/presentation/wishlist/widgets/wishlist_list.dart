@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:movie_pedia/core/database/wishlist_db.dart';
+import 'package:movie_pedia/core/providers/wishlist_provider.dart';
 import 'package:movie_pedia/presentation/wishlist/widgets/wishlist_item.dart';
 
 class WishlistList extends StatelessWidget {

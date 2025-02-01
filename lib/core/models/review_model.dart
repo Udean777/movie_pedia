@@ -24,4 +24,14 @@ class ReviewModel {
           : null,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'author': author,
+      'content': content,
+      'rating': rating,
+      'avatarPath': avatarPath,
+    };
+  }
 }

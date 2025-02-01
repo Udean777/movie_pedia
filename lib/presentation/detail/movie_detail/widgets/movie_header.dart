@@ -122,7 +122,7 @@ class MovieHeader extends ConsumerWidget {
               if (isWishlisted) {
                 wishlistNotifier.removeFromWishlist(movie.title);
               } else {
-                wishlistNotifier.addToWishlistFromDetail(movie);
+                wishlistNotifier.addToWishlist(movie);
               }
             },
           ),

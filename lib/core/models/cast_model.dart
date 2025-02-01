@@ -21,4 +21,13 @@ class CastModel {
       character: json['character'] ?? '',
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'profilePath': profilePath,
+      'character': character,
+    };
+  }
 }

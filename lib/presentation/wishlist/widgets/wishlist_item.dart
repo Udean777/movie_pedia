@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_pedia/core/database/wishlist_db.dart';
-import 'package:movie_pedia/core/models/genre_model.dart';
 import 'package:movie_pedia/core/providers/tmdb_provider.dart';
 import 'package:movie_pedia/core/providers/wishlist_provider.dart';
 
@@ -13,13 +11,21 @@ class WishlistItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final wishlistNotifier = ref.read(wishlistProvider.notifier);
+    final genres = ref.watch(genresProvider).when(
+          data: (genreList) => genreList
+              .where((genre) => movie.genreIds.contains(genre.id))
+              .map((genre) => genre.name)
+              .join(', '),
+          loading: () => 'Loading...',
+          error: (_, __) => 'Unknown',
+        );
 
     return Dismissible(
       key: Key(movie.title),
       direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-        ref.read(wishlistProvider.notifier).removeFromWishlist(movie.title);
-      },
+      onDismissed: (direction) =>
+          wishlistNotifier.removeFromWishlist(movie.title),
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -27,15 +33,11 @@ class WishlistItem extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
           color: Colors.red,
         ),
-        child: const Icon(
-          Icons.delete,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.delete, color: Colors.white),
       ),
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8),
         color: colorScheme.primary,
-        shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -75,11 +77,7 @@ class WishlistItem extends ConsumerWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: 18,
-                        ),
+                        const Icon(Icons.star, color: Colors.amber, size: 18),
                         Text(
                           ' ${movie.voteAverage.toStringAsFixed(1)}',
                           style: const TextStyle(
@@ -93,56 +91,33 @@ class WishlistItem extends ConsumerWidget {
                     if (movie.runtime != null)
                       Row(
                         children: [
-                          Icon(
-                            Icons.access_time,
-                            color: colorScheme.onPrimary,
-                            size: 18,
-                          ),
+                          Icon(Icons.access_time,
+                              color: colorScheme.onPrimary, size: 18),
                           const SizedBox(width: 4),
                           Text(
                             '${movie.runtime ?? 'N/A'} min',
-                            style: TextStyle(
-                              color: colorScheme.onPrimary,
-                            ),
+                            style: TextStyle(color: colorScheme.onPrimary),
                           ),
                         ],
                       ),
                     const SizedBox(height: 8),
-                    FutureBuilder<List<GenreModel>>(
-                      future: ref.watch(genresProvider.future),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const SizedBox();
-                        }
-
-                        final genres = snapshot.data!
-                            .where((genre) =>
-                                movie.genreIds.contains(genre.id.toString()))
-                            .map((genre) => genre.name)
-                            .join(', ');
-
-                        return Row(
-                          children: [
-                            Icon(
-                              Icons.movie,
+                    Row(
+                      children: [
+                        Icon(Icons.movie,
+                            color: colorScheme.onPrimary, size: 18),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            genres,
+                            style: TextStyle(
                               color: colorScheme.onPrimary,
-                              size: 18,
+                              fontSize: 12,
                             ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                genres.isEmpty ? 'Unknown' : genres,
-                                style: TextStyle(
-                                  color: colorScheme.onPrimary,
-                                  fontSize: 12,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

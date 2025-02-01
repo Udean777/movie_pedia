@@ -29,6 +29,22 @@ class MovieDetailModel {
     required this.reviews,
   });
 
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'posterPath': posterPath,
+      'backdropPath': backdropPath,
+      'voteAverage': voteAverage,
+      'releaseDate': releaseDate,
+      'runtime': runtime,
+      'overview': overview,
+      'genres': genres.map((genre) => genre.toMap()).toList(),
+      'cast': cast.map((c) => c.toMap()).toList(),
+      'reviews': reviews.map((r) => r.toMap()).toList(),
+    };
+  }
+
   factory MovieDetailModel.fromJson(Map<String, dynamic> json) {
     List<CastModel> castList = [];
     if (json['credits'] != null && json['credits']['cast'] != null) {
