@@ -12,6 +12,7 @@ class MovieInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
@@ -57,17 +58,36 @@ class MovieInfo extends StatelessWidget {
             length: 3,
             child: Column(
               children: [
-                TabBar(
-                  tabs: [
-                    Tab(text: 'About'),
-                    Tab(text: 'Reviews'),
-                    Tab(text: 'Cast'),
-                  ],
-                  indicatorColor: getTextColor(context),
-                  labelColor: getTextColor(context),
-                  unselectedLabelColor: Colors.grey,
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: TabBar(
+                    tabs: const [
+                      Tab(text: 'About'),
+                      Tab(text: 'Reviews'),
+                      Tab(text: 'Cast'),
+                    ],
+                    labelColor: colorScheme.onSurface,
+                    unselectedLabelColor: colorScheme.onSurfaceVariant,
+                    labelStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    unselectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                    indicator: BoxDecoration(
+                      color: colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    splashBorderRadius: BorderRadius.circular(12),
+                    padding: const EdgeInsets.all(4),
                   ),
                 ),
                 SizedBox(

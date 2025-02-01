@@ -167,7 +167,7 @@ class _SigninPageState extends ConsumerState<SigninPage> {
                       const SizedBox(height: 24),
                       NavigationSignButton(
                         text: 'Don\'t have an account? ',
-                        subText: 'Sign Up',
+                        subText: 'Register',
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
