@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_pedia/core/models/movie_detail_model.dart';
 import 'package:movie_pedia/core/utils/get_text_color.dart';
 import 'package:movie_pedia/core/widgets/not_found.dart';
+import 'package:movie_pedia/presentation/detail/movie_detail/widgets/similar_card.dart';
 
 /// Widget `AboutMovieTab` menampilkan deskripsi atau sinopsis film.
 /// Jika deskripsi tidak tersedia, akan menampilkan pesan "No overview found".
@@ -27,18 +28,27 @@ class AboutMovieTab extends StatelessWidget {
     }
 
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(
-            top: 16), // Memberikan jarak atas agar konten lebih nyaman dibaca.
-        child: Text(
-          movie.overview, // Menampilkan sinopsis film.
-          style: TextStyle(
-            color: getTextColor(
-                context), // Warna teks disesuaikan dengan tema (terang/gelap).
-            height:
-                1.5, // Memberikan jarak antar baris agar lebih mudah dibaca.
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: Text(
+              movie.overview, // Menampilkan sinopsis film.
+              style: TextStyle(
+                color: getTextColor(
+                    context), // Warna teks disesuaikan dengan tema (terang/gelap).
+                height:
+                    1.5, // Memberikan jarak antar baris agar lebih mudah dibaca.
+              ),
+            ),
           ),
-        ),
+          const SizedBox(
+              height:
+                  8), // Memberikan sedikit jarak sebelum menampilkan SimilarMoviesSection
+          SimilarMoviesSection(
+              movieId: movie.id), // Menampilkan card similar movies
+        ],
       ),
     );
   }

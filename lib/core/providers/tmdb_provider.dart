@@ -37,6 +37,31 @@ final searchMoviesProvider =
       .toList();
 });
 
+/// FutureProvider untuk mengambil daftar film serupa berdasarkan movieId
+final similarMoviesProvider =
+    FutureProvider.family<List<MovieModel>, int>((ref, movieId) async {
+  final dio = ref.watch(dioProvider);
+
+  try {
+    final response = await dio.get(
+      "/movie/$movieId/similar",
+      queryParameters: {
+        "language": "en-US",
+        "page": 1,
+      },
+    );
+
+    // Konversi hasil JSON ke dalam list MovieModel
+    // Batasi hanya 10 film serupa yang ditampilkan
+    return (response.data["results"] as List)
+        .map((json) => MovieModel.fromJson(json))
+        .take(10)
+        .toList();
+  } catch (e) {
+    rethrow;
+  }
+});
+
 /// FutureProvider yang mengambil daftar film berdasarkan kategori yang dipilih.
 /// Menggunakan `.family` untuk menerima parameter kategori.
 /// Jika kategori adalah "now_playing", hanya menampilkan 5 film.
