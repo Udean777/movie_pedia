@@ -1,5 +1,8 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:movie_pedia/core/models/movie_model.dart';
 import 'package:movie_pedia/core/providers/favorite_provider.dart';
 import 'package:movie_pedia/core/providers/wishlist_provider.dart';
@@ -50,6 +53,145 @@ class MovieHomeCard extends ConsumerWidget {
   /// Flag untuk menampilkan/menyembunyikan ikon wishlist
   final bool showWishlistIcon;
 
+  /// Fungsi untuk menyimpan gambar ke galeri
+  Future<void> _saveImageToGallery(
+      BuildContext context, String imageUrl) async {
+    try {
+      // Menampilkan loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
+      // Download gambar menggunakan Dio
+      final response = await Dio().get(
+        imageUrl,
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      // Simpan gambar ke galeri
+      final result = await ImageGallerySaver.saveImage(
+        Uint8List.fromList(response.data),
+        quality: 100,
+        name: "MoviePedia_${movie.title.replaceAll(' ', '_')}",
+      );
+
+      // Tutup loading indicator
+      Navigator.pop(context);
+
+      // Tampilkan pesan sukses/error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            result['isSuccess']
+                ? 'Gambar berhasil disimpan ke galeri'
+                : 'Gagal menyimpan gambar',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (e) {
+      // Tutup loading indicator
+      Navigator.pop(context);
+
+      // Tampilkan pesan error
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Terjadi kesalahan saat menyimpan gambar'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  /// Fungsi untuk menampilkan modal preview gambar
+  void _showImagePreviewModal(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.all(16),
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.7,
+              maxWidth: MediaQuery.of(context).size.width,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header dengan judul film dan tombol close
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          movie.title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Gambar preview
+                Flexible(
+                  child: InteractiveViewer(
+                    minScale: 0.5,
+                    maxScale: 3.0,
+                    child: Image.network(
+                      movie.posterPath,
+                      fit: BoxFit.contain,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+
+                // Tombol save to gallery
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton.icon(
+                    onPressed: () =>
+                        _saveImageToGallery(context, movie.posterPath),
+                    icon: const Icon(Icons.save_alt),
+                    label: const Text('Save to Gallery'),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
@@ -62,6 +204,7 @@ class MovieHomeCard extends ConsumerWidget {
           ),
         );
       },
+      onLongPress: () => _showImagePreviewModal(context),
       child: ClipRRect(
         /// Memberikan efek rounded corner pada kartu
         borderRadius: BorderRadius.circular(12),

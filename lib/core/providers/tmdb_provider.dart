@@ -37,26 +37,54 @@ final searchMoviesProvider =
       .toList();
 });
 
-/// FutureProvider untuk mengambil daftar film serupa berdasarkan movieId
+/// FutureProvider untuk mengambil daftar film berdasarkan genre yang sama
+/// Menggunakan movie ID untuk mendapatkan genre dari film tersebut,
+/// kemudian mencari film lain dengan genre yang sama
 final similarMoviesProvider =
     FutureProvider.family<List<MovieModel>, int>((ref, movieId) async {
   final dio = ref.watch(dioProvider);
 
   try {
-    final response = await dio.get(
-      "/movie/$movieId/similar",
+    // 1. Pertama, dapatkan detail film untuk mendapatkan genre IDs
+    final movieDetail = await dio.get(
+      "/movie/$movieId",
       queryParameters: {
         "language": "en-US",
-        "page": 1,
       },
     );
 
-    // Konversi hasil JSON ke dalam list MovieModel
-    // Batasi hanya 10 film serupa yang ditampilkan
-    return (response.data["results"] as List)
-        .map((json) => MovieModel.fromJson(json))
-        .take(10)
+    // Ekstrak genre IDs dari detail film
+    final List<int> genreIds = (movieDetail.data["genres"] as List)
+        .map((genre) => genre["id"] as int)
         .toList();
+
+    if (genreIds.isEmpty) {
+      return [];
+    }
+
+    // 2. Kemudian, cari film berdasarkan genre pertama
+    // Menggunakan genre pertama untuk mendapatkan hasil yang lebih fokus
+    final response = await dio.get(
+      "/discover/movie",
+      queryParameters: {
+        "language": "en-US",
+        "with_genres": genreIds.first.toString(),
+        "page": 1,
+        "sort_by": "popularity.desc", // Urutkan berdasarkan popularitas
+        "exclude_ids": movieId.toString(), // Exclude film yang sedang dilihat
+      },
+    );
+
+    // 3. Konversi hasil JSON ke dalam list MovieModel
+    final List<MovieModel> movies = (response.data["results"] as List)
+        .map((json) => MovieModel.fromJson(json))
+        .where((movie) =>
+            movie.id !=
+            movieId) // Double check untuk menghindari film yang sama
+        .take(10) // Batasi hanya 10 film
+        .toList();
+
+    return movies;
   } catch (e) {
     rethrow;
   }
