@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 ///
 /// **Fitur:**
 /// - Berbentuk lingkaran.
-/// - Memiliki warna latar yang dapat disesuaikan dari `colorScheme.secondaryContainer`.
+/// - Memiliki warna latar yang dapat disesuaikan dari `colorScheme.primaryContainer`.
 /// - Memiliki border dengan warna `colorScheme.primary`.
 /// - Menampilkan ikon default `Icons.person` jika tidak ada gambar profil yang tersedia.
 ///
@@ -35,7 +35,7 @@ class ProfilePicture extends StatelessWidget {
       /// - Menggunakan `BoxDecoration` untuk membentuk lingkaran dan menambahkan border.
       decoration: BoxDecoration(
         shape: BoxShape.circle, // Membuat bentuk lingkaran.
-        color: colorScheme.secondaryContainer, // Warna latar belakang profil.
+        color: colorScheme.primaryContainer, // Warna latar belakang profil.
 
         /// **Border Profil**
         /// - Warna border menggunakan `colorScheme.primary`.
@@ -48,11 +48,11 @@ class ProfilePicture extends StatelessWidget {
 
       /// **Ikon Default Profil**
       /// - Jika pengguna tidak memiliki foto profil, ikon `Icons.person` akan ditampilkan.
-      /// - Ikon memiliki ukuran 60 dan warna `colorScheme.onSecondaryContainer`.
+      /// - Ikon memiliki ukuran 60 dan warna `colorScheme.onPrimaryContainer`.
       child: Icon(
         Icons.person,
         size: 60,
-        color: colorScheme.onSecondaryContainer,
+        color: colorScheme.onPrimaryContainer,
       ),
     );
   }

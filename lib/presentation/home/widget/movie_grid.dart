@@ -1,141 +1,97 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:movie_pedia/core/providers/favorite_provider.dart';
 import 'package:movie_pedia/core/providers/tmdb_provider.dart';
+import 'package:movie_pedia/core/providers/wishlist_provider.dart';
 import 'package:movie_pedia/core/widgets/not_found.dart';
-import 'package:movie_pedia/presentation/detail/movie_detail/movie_detail_page.dart';
+import 'package:movie_pedia/presentation/home/widget/movie_home_card.dart';
 
-/// `MovieGrid` adalah widget yang menampilkan daftar film dalam bentuk grid.
-/// Widget ini menggunakan `ConsumerWidget` untuk membaca state dari Riverpod.
+/// **MovieGrid Widget**
+///
+/// Widget ini digunakan untuk menampilkan daftar film dalam format grid.
+/// `MovieGrid` menggunakan `ConsumerWidget` dari Riverpod untuk membaca dan
+/// mengelola state aplikasi.
+///
+/// **Fitur Utama:**
+/// - Mengambil kategori film yang dipilih dari state provider.
+/// - Mengambil daftar film dari API berdasarkan kategori.
+/// - Menampilkan daftar film dalam bentuk grid dengan 2 kolom.
+/// - Menampilkan status apakah film termasuk dalam daftar favorit atau wishlist.
+/// - Menampilkan indikator loading saat data sedang dimuat.
+/// - Menampilkan pesan error jika terjadi kesalahan saat memuat data.
 class MovieGrid extends ConsumerWidget {
-  /// Konstruktor `MovieGrid`
+  /// Konstruktor untuk `MovieGrid`
   const MovieGrid({super.key});
 
-  /// **Membangun tampilan grid film**
+  /// **Membangun tampilan grid film berdasarkan state Riverpod**
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Mengambil kategori film yang dipilih dari Riverpod state
+    // Mengambil kategori film yang dipilih dari state provider.
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
-    // Mengambil daftar film berdasarkan kategori yang dipilih
+    // Mengambil daftar film berdasarkan kategori yang dipilih.
     final movies = ref.watch(moviesProvider(selectedCategory));
 
-    // Mengambil skema warna dari tema saat ini
+    // Mengambil skema warna dari tema saat ini.
     final colorScheme = Theme.of(context).colorScheme;
 
+    // Mengambil daftar film favorit pengguna.
+    final favorites = ref.watch(favoriteProvider);
+
     return movies.when(
-      // Jika data film berhasil dimuat
+      // **Jika data film berhasil dimuat, tampilkan dalam bentuk grid**
       data: (movies) => GridView.builder(
-        padding: const EdgeInsets.all(12), // Memberikan padding di sekitar grid
+        padding:
+            const EdgeInsets.all(12), // Menambahkan padding di sekitar grid.
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Menampilkan 2 kolom dalam grid
-          crossAxisSpacing: 12, // Jarak horizontal antar item dalam grid
-          mainAxisSpacing: 12, // Jarak vertikal antar item dalam grid
+          crossAxisCount: 2, // Menampilkan 2 kolom dalam grid.
+          crossAxisSpacing: 12, // Jarak horizontal antar item dalam grid.
+          mainAxisSpacing: 12, // Jarak vertikal antar item dalam grid.
           childAspectRatio:
-              0.6, // Rasio ukuran item dalam grid (tinggi dibandingkan lebar)
+              0.6, // Rasio aspek item dalam grid (tinggi dibandingkan lebar).
         ),
-        itemCount: movies.length, // Jumlah item yang ditampilkan dalam grid
+        itemCount:
+            movies.length, // Menentukan jumlah item yang akan ditampilkan.
         itemBuilder: (context, index) {
           final movie = movies[index];
 
-          // Jika daftar film kosong, tampilkan widget "Not Found"
+          // **Jika daftar film kosong, tampilkan widget "Not Found"**
           if (movies.isEmpty) {
             return NotFound(
-              image:
-                  'assets/video-player.png', // Gambar untuk menunjukkan tidak ada data
-              title: 'No Movies', // Teks yang ditampilkan
+              image: 'assets/video-player.png', // Gambar ikon tidak ada film.
+              title: 'No Movies', // Pesan teks yang ditampilkan.
             );
           }
 
-          // Widget untuk menampilkan poster film
-          return GestureDetector(
-            // Navigasi ke halaman detail film saat pengguna mengetuk poster
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MovieDetailPage(movieId: movie.id),
-                ),
-              );
-            },
-            child: ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(12), // Membuat sudut poster melengkung
-              child: Stack(
-                children: [
-                  // Menampilkan gambar poster film
-                  Image.network(
-                    movie.posterPath, // URL gambar poster
-                    fit: BoxFit
-                        .cover, // Menyesuaikan gambar agar pas dalam frame
-                    width: double.infinity, // Lebar penuh
-                    height: double.infinity, // Tinggi penuh
-                  ),
-                  // Overlay untuk menampilkan judul dan rating film di bagian bawah poster
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(
-                          6), // Padding untuk teks di dalam container
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.black.withOpacity(
-                                0.8), // Warna hitam dengan transparansi 80%
-                            Colors
-                                .transparent // Warna transparan untuk efek gradasi
-                          ],
-                          begin: Alignment
-                              .bottomCenter, // Gradasi dimulai dari bawah
-                          end: Alignment.topCenter, // Gradasi berakhir di atas
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Menampilkan judul film
-                          Text(
-                            movie.title,
-                            style: TextStyle(
-                              color: colorScheme
-                                  .onPrimary, // Warna teks sesuai tema
-                              fontWeight:
-                                  FontWeight.bold, // Teks bold untuk judul
-                            ),
-                            overflow: TextOverflow
-                                .ellipsis, // Jika teks terlalu panjang, akan dipotong dengan "..."
-                          ),
-                          // Menampilkan rating film
-                          Text(
-                            '⭐ ${movie.voteAverage}',
-                            style: const TextStyle(
-                              color: Colors
-                                  .amber, // Warna kuning untuk rating bintang
-                              fontWeight:
-                                  FontWeight.bold, // Teks bold untuk rating
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          // **Mengecek apakah film termasuk dalam daftar favorit**
+          final isFavorite = favorites.any((m) => m.title == movie.title);
+
+          // **Mengambil daftar film yang ada di wishlist**
+          final wishlist = ref.watch(wishlistProvider);
+
+          // **Mengecek apakah film sudah ada di wishlist**
+          final isWishlisted = wishlist.any((m) => m.title == movie.title);
+
+          // **Menampilkan widget MovieHomeCard untuk setiap film dalam daftar**
+          return MovieHomeCard(
+            movie: movie,
+            isFavorite: isFavorite,
+            isWishlisted: isWishlisted,
+            colorScheme: colorScheme,
           );
         },
       ),
-      // Jika masih loading, tampilkan indikator loading
+      // **Jika masih loading, tampilkan indikator loading**
       loading: () => const Center(child: CircularProgressIndicator()),
-      // Jika terjadi error, tampilkan pesan error
+
+      // **Jika terjadi error, tampilkan pesan kesalahan**
       error: (error, _) => Center(
         child: Text(
-          "Failed to load movies", // Pesan error
+          "Failed to load movies", // Pesan error yang ditampilkan.
           style: TextStyle(
-              color: colorScheme.error), // Warna teks error sesuai tema
+              color: colorScheme.error), // Warna teks error sesuai tema.
         ),
       ),
     );

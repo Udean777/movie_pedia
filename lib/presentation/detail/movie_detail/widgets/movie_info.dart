@@ -81,8 +81,8 @@ class MovieInfo extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color:
-                        colorScheme.surfaceVariant, // Warna latar belakang tab
+                    color: colorScheme
+                        .surfaceContainerHighest, // Warna latar belakang tab
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TabBar(

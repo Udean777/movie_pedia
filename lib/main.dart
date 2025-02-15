@@ -11,14 +11,14 @@ void main() async {
   /// **Pastikan widget binding telah diinisialisasi sebelum melakukan inisialisasi asinkron**
   WidgetsFlutterBinding.ensureInitialized();
 
+  /// **Memuat variabel lingkungan dari file `.env`**
+  /// Ini digunakan untuk menyimpan konfigurasi sensitif seperti API keys.
+  await dotenv.load(fileName: ".env");
+
   /// **Inisialisasi Firebase dengan opsi yang sesuai berdasarkan platform saat ini**
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  /// **Memuat variabel lingkungan dari file `.env`**
-  /// Ini digunakan untuk menyimpan konfigurasi sensitif seperti API keys.
-  await dotenv.load(fileName: ".env");
 
   /// **Menjalankan aplikasi dengan menggunakan `ProviderScope`**
   /// `ProviderScope` digunakan untuk mengaktifkan state management dengan Riverpod.

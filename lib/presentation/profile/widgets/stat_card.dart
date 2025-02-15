@@ -43,9 +43,9 @@ class StatCard extends StatelessWidget {
     return Card(
       /// **Kartu tanpa bayangan (`elevation: 0`)**
       /// - Menampilkan statistik dalam bentuk kartu.
-      /// - Menggunakan warna `tertiaryContainer` dari skema warna agar konsisten dengan tema.
+      /// - Menggunakan warna `primaryContainer` dari skema warna agar konsisten dengan tema.
       elevation: 0,
-      color: colorScheme.tertiaryContainer,
+      color: colorScheme.primaryContainer,
       child: Padding(
         /// **Padding untuk memberikan ruang yang cukup dalam kartu**
         padding: const EdgeInsets.all(16.0),
@@ -53,10 +53,10 @@ class StatCard extends StatelessWidget {
           children: [
             /// **Ikon Statistik**
             /// - Menampilkan ikon yang sesuai dengan kategori statistik.
-            /// - Menggunakan warna `onTertiaryContainer` agar kontras dengan latar belakang.
+            /// - Menggunakan warna `onPrimaryContainer` agar kontras dengan latar belakang.
             Icon(
               icon,
-              color: colorScheme.onTertiaryContainer,
+              color: colorScheme.onPrimaryContainer,
               size: 28,
             ),
 
@@ -65,13 +65,13 @@ class StatCard extends StatelessWidget {
 
             /// **Angka Statistik**
             /// - Ditampilkan dalam ukuran besar (`fontSize: 24`) agar lebih menonjol.
-            /// - Menggunakan warna `onTertiaryContainer` agar kontras dengan latar belakang.
+            /// - Menggunakan warna `onPrimaryContainer` agar kontras dengan latar belakang.
             Text(
               count,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: colorScheme.onTertiaryContainer,
+                color: colorScheme.onPrimaryContainer,
               ),
             ),
 
@@ -80,11 +80,11 @@ class StatCard extends StatelessWidget {
 
             /// **Judul Statistik**
             /// - Menjelaskan angka yang ditampilkan.
-            /// - Menggunakan warna `onTertiaryContainer` agar tetap terbaca dengan baik.
+            /// - Menggunakan warna `onPrimaryContainer` agar tetap terbaca dengan baik.
             Text(
               title,
               style: TextStyle(
-                color: colorScheme.onTertiaryContainer,
+                color: colorScheme.onPrimaryContainer,
               ),
             ),
           ],

@@ -37,6 +37,7 @@ class ReviewsTab extends StatelessWidget {
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.black
+                // ignore: deprecated_member_use
                 .withOpacity(0.1), // Latar belakang dengan transparansi
             borderRadius: BorderRadius.circular(8), // Membuat sudut melengkung
           ),

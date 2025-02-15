@@ -76,6 +76,7 @@ class SettingsTile extends StatelessWidget {
             /// - Menggunakan warna `onSurfaceVariant` dengan opasitas 50% agar lebih lembut.
             Icon(
               Icons.chevron_right,
+              // ignore: deprecated_member_use
               color: colorScheme.onSurfaceVariant.withOpacity(0.5),
             ),
           ],

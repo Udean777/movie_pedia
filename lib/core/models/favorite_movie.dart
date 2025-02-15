@@ -1,9 +1,9 @@
-/// Model untuk menyimpan data film yang diinginkan pengguna (wishlist).
-class WishlistMovie {
+/// Model untuk menyimpan data film yang difavoritkan oleh pengguna.
+class FavoriteMovie {
   /// ID unik film (biasanya dari TMDB).
   final String id;
 
-  /// ID pengguna yang menambahkan film ini ke wishlist.
+  /// ID pengguna yang menyimpan film ini sebagai favorit.
   final String userId;
 
   /// Judul film.
@@ -21,8 +21,8 @@ class WishlistMovie {
   /// Durasi film dalam menit (opsional).
   final int? runtime;
 
-  /// Konstruktor untuk membuat instance `WishlistMovie`.
-  WishlistMovie({
+  /// Konstruktor untuk membuat instance `FavoriteMovie`.
+  FavoriteMovie({
     required this.id,
     required this.userId,
     required this.title,
@@ -32,9 +32,9 @@ class WishlistMovie {
     this.runtime,
   });
 
-  /// Mengonversi objek `WishlistMovie` menjadi `Map<String, dynamic>`.
+  /// Mengubah objek `FavoriteMovie` menjadi representasi `Map<String, dynamic>`.
   ///
-  /// Fungsi ini berguna saat ingin menyimpan data ke database atau API.
+  /// Digunakan saat ingin menyimpan data ke dalam database atau API.
   Map<String, dynamic> toMap() {
     return {
       'userId': userId, // Menyimpan ID pengguna
@@ -47,16 +47,11 @@ class WishlistMovie {
     };
   }
 
-  /// Mengonversi `Map<String, dynamic>` menjadi objek `WishlistMovie`.
+  /// Mengonversi `Map<String, dynamic>` menjadi objek `FavoriteMovie`.
   ///
   /// Biasanya digunakan saat mengambil data dari database atau API.
-  ///
-  /// - [id]: ID unik film yang akan digunakan untuk pembuatan objek `WishlistMovie`.
-  /// - [data]: Data film dalam bentuk `Map<String, dynamic>` yang berisi informasi film.
-  ///
-  /// Mengembalikan instance `WishlistMovie`.
-  static WishlistMovie fromMap(String id, Map<String, dynamic> data) {
-    return WishlistMovie(
+  static FavoriteMovie fromMap(String id, Map<String, dynamic> data) {
+    return FavoriteMovie(
       id: id, // Menggunakan ID dari sumber data
       userId: data['userId'] ??
           '', // Mengambil ID pengguna, default ke string kosong jika null

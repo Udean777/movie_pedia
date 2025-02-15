@@ -1,6 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_pedia/core/models/movie_detail_model.dart';
+import 'package:movie_pedia/core/providers/favorite_provider.dart';
 import 'package:movie_pedia/core/providers/wishlist_provider.dart';
 
 /// Widget `MovieHeader` menampilkan gambar latar belakang film, judul, rating, dan tombol wishlist.
@@ -19,6 +22,10 @@ class MovieHeader extends ConsumerWidget {
 
     // Mengecek apakah film ini sudah ada di wishlist dengan mencocokkan judul.
     final isWishlisted = wishlist.any((m) => m.title == movie.title);
+
+    final favorites = ref.watch(favoriteProvider);
+
+    final isFavorite = favorites.any((m) => m.title == movie.title);
 
     // Mendapatkan skema warna dari tema aplikasi.
     final colorScheme = Theme.of(context).colorScheme;
@@ -137,8 +144,8 @@ class MovieHeader extends ConsumerWidget {
               ),
               padding: EdgeInsets.all(8),
               child: Icon(
-                isWishlisted ? Icons.favorite : Icons.favorite_border,
-                color: isWishlisted ? Colors.red : Colors.white,
+                isWishlisted ? Icons.bookmark : Icons.bookmark_border,
+                color: Colors.white,
               ),
             ),
             onPressed: () {
@@ -149,6 +156,33 @@ class MovieHeader extends ConsumerWidget {
                 wishlistNotifier.removeFromWishlist(movie.title);
               } else {
                 wishlistNotifier.addToWishlist(movie);
+              }
+            },
+          ),
+        ),
+        Positioned(
+          top: 40,
+          right: 60,
+          child: IconButton(
+            icon: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black.withOpacity(0.5),
+              ),
+              padding: EdgeInsets.all(8),
+              child: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? Colors.red : Colors.white,
+              ),
+            ),
+            onPressed: () {
+              // Mengakses provider wishlist untuk menambahkan atau menghapus film dari daftar wishlist.
+              final favoriteNotifier = ref.read(favoriteProvider.notifier);
+
+              if (isFavorite) {
+                favoriteNotifier.removeFromFavorite(movie.title);
+              } else {
+                favoriteNotifier.addToFavorite(movie);
               }
             },
           ),

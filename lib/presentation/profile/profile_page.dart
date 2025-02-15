@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_pedia/core/providers/favorite_provider.dart';
 import 'package:movie_pedia/core/providers/firebase_auth_provider.dart';
 import 'package:movie_pedia/core/providers/wishlist_provider.dart';
+import 'package:movie_pedia/presentation/favorite/favorite_page.dart';
 import 'package:movie_pedia/presentation/profile/widgets/info_card.dart';
 import 'package:movie_pedia/presentation/profile/widgets/profile_picture.dart';
 import 'package:movie_pedia/presentation/profile/widgets/settings_card.dart';
 import 'package:movie_pedia/presentation/profile/widgets/stat_card.dart';
+import 'package:movie_pedia/presentation/wishlist/wishlist_page.dart';
 
 /// **ProfilePage Widget**
 ///
@@ -39,6 +42,8 @@ class ProfilePage extends ConsumerWidget {
     /// - `wishlistCountProvider` digunakan untuk mendapatkan jumlah wishlist pengguna.
     /// - Menggunakan `.when()` untuk menangani berbagai state (loading, error, data tersedia).
     final wishlistCount = ref.watch(wishlistCountProvider);
+
+    final favoriteCount = ref.watch(favoriteCountProvider);
 
     /// **Mengambil skema warna dari tema aplikasi**
     final colorScheme = Theme.of(context).colorScheme;
@@ -81,20 +86,51 @@ class ProfilePage extends ConsumerWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: StatCard(
-                          colorScheme: colorScheme,
-                          title: 'Wishlist',
-                          count: wishlistCount.when(
-                            /// Jika data berhasil dimuat, tampilkan jumlah wishlist.
-                            data: (count) => count.toString(),
-
-                            /// Jika sedang memuat, tampilkan indikator "..."
-                            loading: () => '...',
-
-                            /// Jika terjadi error, tampilkan "0"
-                            error: (_, __) => '0',
+                        child: InkWell(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => WishlistPage(),
+                            ),
                           ),
-                          icon: Icons.favorite_border,
+                          child: StatCard(
+                            colorScheme: colorScheme,
+                            title: 'Wishlist',
+                            count: wishlistCount.when(
+                              /// Jika data berhasil dimuat, tampilkan jumlah wishlist.
+                              data: (count) => count.toString(),
+
+                              /// Jika sedang memuat, tampilkan indikator "..."
+                              loading: () => '...',
+
+                              /// Jika terjadi error, tampilkan "0"
+                              error: (_, __) => '0',
+                            ),
+                            icon: Icons.bookmark,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FavoritePage(),
+                            ),
+                          ),
+                          child: StatCard(
+                            colorScheme: colorScheme,
+                            title: 'Favorite',
+                            count: favoriteCount.when(
+                              /// Jika data berhasil dimuat, tampilkan jumlah favorite.
+                              data: (count) => count.toString(),
+
+                              /// Jika sedang memuat, tampilkan indikator "..."
+                              loading: () => '...',
+
+                              /// Jika terjadi error, tampilkan "0"
+                              error: (_, __) => '0',
+                            ),
+                            icon: Icons.favorite,
+                          ),
                         ),
                       ),
                     ],
@@ -111,7 +147,10 @@ class ProfilePage extends ConsumerWidget {
                   /// - Saat ditekan, akan memanggil `signOut()` dari `authServiceProvider`.
                   SizedBox(
                     width: double.infinity,
-                    child: FilledButton.tonal(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primaryContainer,
+                      ),
                       onPressed: () {
                         ref.read(authServiceProvider).signOut();
                       },

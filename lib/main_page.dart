@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_pedia/presentation/favorite/favorite_page.dart';
 import 'package:movie_pedia/presentation/home/home_page.dart';
 import 'package:movie_pedia/presentation/profile/profile_page.dart';
 import 'package:movie_pedia/presentation/search/search_page.dart';
@@ -22,6 +23,7 @@ class _MainPageState extends State<MainPage> {
   static final List<Widget> items = <Widget>[
     HomePage(),
     SearchPage(),
+    FavoritePage(),
     WishlistPage(),
     ProfilePage(),
   ];
@@ -61,9 +63,16 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons
-                .favorite_border), // Ikon untuk tab "Wishlist" saat tidak aktif.
+                .favorite_border), // Ikon untuk tab "Favorite" saat tidak aktif.
             activeIcon:
-                Icon(Icons.favorite), // Ikon untuk tab "Wishlist" saat aktif.
+                Icon(Icons.favorite), // Ikon untuk tab "Favorite" saat aktif.
+            label: 'Favorite',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons
+                .bookmark_outline), // Ikon untuk tab "Wishlist" saat tidak aktif.
+            activeIcon:
+                Icon(Icons.bookmark), // Ikon untuk tab "Wishlist" saat aktif.
             label: 'Wishlist',
           ),
           BottomNavigationBarItem(
@@ -82,6 +91,7 @@ class _MainPageState extends State<MainPage> {
         selectedItemColor: colorScheme.primary,
 
         /// Warna item yang tidak dipilih lebih redup untuk memberikan perbedaan visual.
+        // ignore: deprecated_member_use
         unselectedItemColor: colorScheme.onSurface.withOpacity(0.6),
 
         /// Menyembunyikan label untuk item yang tidak dipilih.
