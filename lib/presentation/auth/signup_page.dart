@@ -10,34 +10,70 @@ import 'package:movie_pedia/core/widgets/navigation_sign_button.dart';
 import 'package:movie_pedia/core/widgets/social_sign_button.dart';
 import 'package:movie_pedia/presentation/auth/signin_page.dart';
 
+/// Widget yang menampilkan halaman pendaftaran (sign-up) dari aplikasi.
+///
+/// Halaman ini memungkinkan pengguna untuk membuat akun baru menggunakan email/password
+/// atau melalui penyedia autentikasi sosial (Google dan Facebook).
+/// Halaman ini mencakup validasi formulir dan penanganan kesalahan untuk proses pendaftaran.
 class SignupPage extends ConsumerStatefulWidget {
+  /// Membuat halaman pendaftaran.
   const SignupPage({super.key});
 
   @override
   ConsumerState<SignupPage> createState() => _SignupPageState();
 }
 
+/// State untuk widget [SignupPage].
+///
+/// Mengelola state formulir, controller input pengguna, dan proses autentikasi
+/// untuk fungsionalitas pendaftaran.
 class _SignupPageState extends ConsumerState<SignupPage> {
+  /// Key untuk widget form untuk mengelola state dan validasi formulir.
   final _formKey = GlobalKey<FormState>();
+
+  /// Controller untuk field input email.
   final _emailController = TextEditingController();
+
+  /// Controller untuk field input password.
   final _passwordController = TextEditingController();
+
+  /// Controller untuk field input konfirmasi password.
   final _confirmPasswordController = TextEditingController();
+
+  /// Flag untuk melacak apakah operasi autentikasi sedang berlangsung.
   bool _isLoading = false;
 
+  /// Memulai proses masuk dengan Google.
+  ///
+  /// Metode ini akan diimplementasikan untuk menangani integrasi
+  /// autentikasi Google di masa mendatang.
   Future<void> _onGoogleLogin() async {
-    // Implement Google login logic later
+    // Implementasi logika login Google nanti
   }
 
+  /// Memulai proses masuk dengan Facebook.
+  ///
+  /// Metode ini akan diimplementasikan untuk menangani integrasi
+  /// autentikasi Facebook di masa mendatang.
   Future<void> _onFacebookLogin() async {
-    // Implement Facebook login logic later
+    // Implementasi logika login Facebook nanti
   }
 
+  /// Menangani pengiriman formulir untuk pendaftaran email/password.
+  ///
+  /// Melakukan langkah-langkah berikut:
+  /// 1. Memvalidasi input formulir
+  /// 2. Memeriksa apakah password cocok
+  /// 3. Mencoba membuat akun pengguna baru
+  /// 4. Menangani kesalahan yang terjadi selama pendaftaran
+  ///
+  /// Menampilkan pesan kesalahan yang sesuai kepada pengguna jika ada langkah yang gagal.
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password does not match!')),
+        const SnackBar(content: Text('Password tidak cocok!')),
       );
       return;
     }
@@ -69,6 +105,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     return Scaffold(
       body: Stack(
         children: [
+          // Container gambar latar belakang
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -77,6 +114,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               ),
             ),
           ),
+          // Container lapisan gradien
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -89,6 +127,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               ),
             ),
           ),
+          // Konten utama
           GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: SafeArea(
@@ -98,6 +137,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                   child: Column(
                     children: [
                       SizedBox(height: 40),
+                      // Kartu formulir pendaftaran
                       Card(
                         color: cardColor,
                         elevation: 8,
@@ -111,7 +151,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                             child: Column(
                               children: [
                                 Text(
-                                  'Create Your Account',
+                                  'Buat Akun Anda',
                                   style: TextStyle(
                                     fontSize: 28,
                                     fontWeight: FontWeight.bold,
@@ -135,14 +175,14 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                                 CustomTextField(
                                   controller: _confirmPasswordController,
                                   icon: Icons.lock_outline,
-                                  labelText: 'Confirm Password',
+                                  labelText: 'Konfirmasi Password',
                                   isPassword: true,
                                 ),
                                 SizedBox(height: 28),
                                 CustomButton(
                                   isLoading: _isLoading,
                                   onPressed: _submit,
-                                  text: 'Register',
+                                  text: 'Daftar',
                                 ),
                               ],
                             ),
@@ -150,8 +190,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                         ),
                       ),
                       SizedBox(height: 24),
+                      // Tombol masuk dengan media sosial
                       SocialSignButton(
-                        text: 'Sign up with Google',
+                        text: 'Daftar dengan Google',
                         onPressed: _onGoogleLogin,
                         backgroundColor: Colors.white,
                         icon: Image.asset(
@@ -163,7 +204,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                       ),
                       SizedBox(height: 12),
                       SocialSignButton(
-                        text: 'Sign up with Facebook',
+                        text: 'Daftar dengan Facebook',
                         onPressed: _onFacebookLogin,
                         backgroundColor: Colors.blue,
                         icon: Icon(
@@ -174,9 +215,10 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                         textColor: Colors.white,
                       ),
                       SizedBox(height: 24),
+                      // Navigasi ke halaman masuk
                       NavigationSignButton(
-                        text: 'Already have an account? ',
-                        subText: 'Login',
+                        text: 'Sudah punya akun? ',
+                        subText: 'Masuk',
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(

@@ -7,16 +7,45 @@ import 'package:movie_pedia/presentation/profile/widgets/profile_picture.dart';
 import 'package:movie_pedia/presentation/profile/widgets/settings_card.dart';
 import 'package:movie_pedia/presentation/profile/widgets/stat_card.dart';
 
+/// **ProfilePage Widget**
+///
+/// `ProfilePage` adalah halaman profil pengguna yang menampilkan informasi pengguna, jumlah wishlist,
+/// pengaturan akun, serta tombol untuk keluar dari akun.
+///
+/// Widget ini menggunakan **Riverpod** untuk mengelola state, seperti autentikasi pengguna dan jumlah wishlist.
+///
+/// **Fitur:**
+/// - Menampilkan foto profil pengguna.
+/// - Menampilkan informasi akun pengguna.
+/// - Menampilkan statistik wishlist pengguna.
+/// - Menampilkan daftar pengaturan akun.
+/// - Menyediakan tombol logout.
+///
+/// **Menggunakan:**
+/// - `ConsumerWidget` dari Riverpod untuk membaca state global.
+/// - `CustomScrollView` dengan `SliverToBoxAdapter` untuk tata letak yang fleksibel.
 class ProfilePage extends ConsumerWidget {
+  /// Konstruktor `ProfilePage`
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// **Mengambil data pengguna yang sedang login**
+    /// - `authStateNotifierProvider` digunakan untuk memantau status autentikasi.
+    /// - Jika `user` bernilai `null`, berarti pengguna belum login.
     final user = ref.watch(authStateNotifierProvider).value;
+
+    /// **Mengambil jumlah item di wishlist**
+    /// - `wishlistCountProvider` digunakan untuk mendapatkan jumlah wishlist pengguna.
+    /// - Menggunakan `.when()` untuk menangani berbagai state (loading, error, data tersedia).
     final wishlistCount = ref.watch(wishlistCountProvider);
+
+    /// **Mengambil skema warna dari tema aplikasi**
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      /// **AppBar**
+      /// - Menampilkan judul "Profile" di tengah.
       appBar: AppBar(
         title: const Text(
           'Profile',
@@ -24,6 +53,9 @@ class ProfilePage extends ConsumerWidget {
         ),
         centerTitle: true,
       ),
+
+      /// **Body menggunakan `CustomScrollView`**
+      /// - Digunakan untuk mendukung scroll yang fleksibel.
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -31,13 +63,21 @@ class ProfilePage extends ConsumerWidget {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
+                  /// **Menampilkan Foto Profil**
+                  /// - Menggunakan `ProfilePicture` widget.
                   ProfilePicture(colorScheme: colorScheme),
                   const SizedBox(height: 24),
+
+                  /// **Menampilkan Informasi Pengguna**
+                  /// - Menggunakan `InfoCard` untuk menampilkan detail akun pengguna.
                   InfoCard(
                     colorScheme: colorScheme,
                     user: user,
                   ),
                   const SizedBox(height: 24),
+
+                  /// **Menampilkan Statistik Wishlist**
+                  /// - Menggunakan `StatCard` untuk menampilkan jumlah wishlist.
                   Row(
                     children: [
                       Expanded(
@@ -45,8 +85,13 @@ class ProfilePage extends ConsumerWidget {
                           colorScheme: colorScheme,
                           title: 'Wishlist',
                           count: wishlistCount.when(
+                            /// Jika data berhasil dimuat, tampilkan jumlah wishlist.
                             data: (count) => count.toString(),
+
+                            /// Jika sedang memuat, tampilkan indikator "..."
                             loading: () => '...',
+
+                            /// Jika terjadi error, tampilkan "0"
                             error: (_, __) => '0',
                           ),
                           icon: Icons.favorite_border,
@@ -55,8 +100,15 @@ class ProfilePage extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 24),
+
+                  /// **Menampilkan Kartu Pengaturan**
+                  /// - Menggunakan `SettingsCard` untuk daftar pengaturan akun.
                   SettingsCard(colorScheme: colorScheme),
                   const SizedBox(height: 24),
+
+                  /// **Tombol Logout**
+                  /// - Menggunakan `FilledButton.tonal` untuk memberikan tampilan tombol yang menarik.
+                  /// - Saat ditekan, akan memanggil `signOut()` dari `authServiceProvider`.
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton.tonal(
